@@ -81,9 +81,10 @@ GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,geniso
 
 BRANCH := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
 MESAB := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
+DRMB := $(shell cd $(TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
 FWB := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
 
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(BRANCH)_$(MESAB)_$(FWB).iso
+ISO_IMAGE := $(PRODUCT_OUT)/$(PRODUCT_NAME)_k$(BRANCH)_m$(MESAB)_f$(FWB).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
@@ -94,31 +95,11 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 		-input-charset utf-8 -V "$(if $(RELEASE_OS_TITLE),$(RELEASE_OS_TITLE),Android-x86) LiveCD" -o $@ $^
 	$(hide) isohybrid --uefi $@ || echo -e "isohybrid not found.\nInstall syslinux 4.0 or higher if you want to build a usb bootable iso."
 	
-	@echo -e ${CL_CYN}""${CL_CYN}
-	@echo -e ${CL_CYN}"      ___           ___                   ___           ___      "${CL_CYN}
-	@echo -e ${CL_CYN}"     /\  \         /\__\      ___        /\  \         /\  \     "${CL_CYN}
-	@echo -e ${CL_CYN}"    /::\  \       /:/  /     /\  \      /::\  \       /::\  \    "${CL_CYN}
-	@echo -e ${CL_CYN}"   /:/\:\  \     /:/  /      \:\  \    /:/\ \  \     /:/\ \  \   "${CL_CYN}
-	@echo -e ${CL_CYN}"  /::\~\:\__\   /:/  /       /::\__\  _\:\~\ \  \   _\:\~\ \  \  "${CL_CYN}
-	@echo -e ${CL_CYN}" /:/\:\ \:\__\ /:/__/     __/:/\/__/ /\ \:\ \ \__\ /\ \:\ \ \__\ "${CL_CYN}
-	@echo -e ${CL_CYN}" \:\~\:\/:/  / \:\  \    /\/:/  /    \:\ \:\ \/__/ \:\ \:\ \/__/ "${CL_CYN}
-	@echo -e ${CL_CYN}"  \:\ \::/  /   \:\  \   \::/__/      \:\ \:\__\    \:\ \:\__\   "${CL_CYN}
-	@echo -e ${CL_CYN}"   \:\/:/  /     \:\  \   \:\__\       \:\/:/  /     \:\/:/  /   "${CL_CYN}
-	@echo -e ${CL_CYN}"    \::/__/       \:\__\   \/__/        \::/  /       \::/  /    "${CL_CYN}
-	@echo -e ${CL_CYN}"     ~~            \/__/                 \/__/         \/__/     "${CL_CYN}
-	@echo -e ${CL_CYN}""${CL_CYN}
-	@echo -e ${CL_CYN}"===========-Bliss-x86 Package Complete-==========="${CL_RST}
+	@echo -e ${CL_CYN}"===========-Android-x86 Package Complete-==========="${CL_RST}
 	@echo -e ${CL_CYN}"Zip: "${CL_CYN} $(ISO_IMAGE)${CL_RST}
 	@echo -e ${CL_CYN}"Size:"${CL_CYN}" `ls -lah $(ISO_IMAGE) | cut -d ' ' -f 5`"${CL_RST}
 	@echo -e ${CL_CYN}"=================================================="${CL_RST}
-	@echo -e ${CL_CYN}"        Have A Truly Blissful Experience"          ${CL_RST}
-	@echo -e ${CL_CYN}"=================================================="${CL_RST}
 	@echo -e ""
-
-	# Generate Bliss Changelog
-	$(hide) ./vendor/bliss/tools/changelog
-	$(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/Changelog-$(BLISS_VERSION).txt
-	
 	@echo -e "\n\n$@ is built successfully.\n\n"
 
 rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_IMG)
