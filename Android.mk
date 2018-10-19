@@ -15,7 +15,7 @@
 ifneq ($(filter x86%,$(TARGET_ARCH)),)
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
-RELEASE_OS_TITLE := Bliss-OS
+RELEASE_OS_TITLE := Android-x86
 include $(CLEAR_VARS)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := rpm/qemu-android
@@ -84,7 +84,7 @@ MESAB := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -
 DRMB := $(shell cd $(TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
 FWB := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
 
-ISO_IMAGE := $(PRODUCT_OUT)/$(PRODUCT_NAME)_k$(BRANCH)_m$(MESAB)_f$(FWB).iso
+ISO_IMAGE := $(PRODUCT_OUT)/Android-$(TARGET_ARCH)_k-$(BRANCH)_m-$(MESAB)_f-$(FWB).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
